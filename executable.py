@@ -226,7 +226,31 @@ def get_google_scholar_articles(query):
     Returns:
         list: A list of article titles from the first page of search results.
     """
-    # Implementation details...
+    # pass
+    # Create a URL for the Google Scholar search
+    url = f'https://scholar.google.com/scholar?q={query}'
+
+    try:
+        # Send a GET request to Google Scholar
+        response = requests.get(url)
+
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            # Parse the HTML content of the response
+            soup = BeautifulSoup(response.text, 'html.parser')
+
+            # Find all the titles on the first page of results
+            titles = [title.text for title in soup.find_all('h3', {'class': 'gs_rt'})]
+
+            return titles
+
+        else:
+            print(f"Failed to retrieve Google Scholar results. Status code: {response.status_code}")
+            return []
+
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
+        return []
 
 # Test cases and main function...
 
