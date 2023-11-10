@@ -26,7 +26,44 @@ def get_listings(html_file):
     Returns:
         list: A list of tuples, each containing the listing title and listing ID.
     """
-    # Implementation details...
+    # pass 
+    with open(html_file, 'r', encoding='utf-8') as file:
+        html_content = file.read()
+    soup = BeautifulSoup(html_content, 'html.parser')
+    print(soup.prettify())
+    
+    # setup the pattern and list of tuples
+    pattern = r'www\.airbnb\.com/rooms/(plus/)?(\d+)'
+
+    tuples = []
+    
+    # get all the links
+    links = soup.findAll('meta') 
+    # loop through the links
+    for link in links:
+        print(link)
+                
+        # get just the link value
+        href_val = link.get('content')
+        # if the link value has the pattern
+        if href_val is not None and re.search(pattern, href_val):
+            print(href_val)
+            # get the link value that matches the pattern
+            val = re.search(pattern, href_val).group()
+            # seperate into just the numeric value
+            val = re.search(r'\d+', val).group()
+            print(val)
+            
+            # Find the next <div> element immediately after the current link
+            next_div = link.find_next('div')
+            next_div = next_div.find_next('div')
+            next_div = next_div.find_next('div')
+            next_div = next_div.find_next('div')
+            next_div = next_div.find_next('div')
+            title = next_div.find_next('div').get_text()
+            tuple = (title, val)
+            tuples.append(tuple)
+    return tuples    
 
 def get_listing_data(listing_id): 
     """
