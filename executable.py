@@ -373,7 +373,10 @@ class TestCases(unittest.TestCase):
         self.assertEqual(results[0], 'Progress on Airbnb: a literature review')
         self.assertEqual(results[5], 'Why tourists choose Airbnb: A motivation-based segmentation study')
 
-
+def main (): 
+    detailed_data = create_detailed_listing_data("html_files/search_results.html")
+    output_csv(detailed_data, "airbnb_dataset.csv")
+    non_valid_airbnbs = validate_policy_numbers(detailed_data)
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
