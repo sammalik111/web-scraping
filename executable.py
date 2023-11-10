@@ -179,18 +179,6 @@ def output_csv(data, filename):
     Returns:
         None
     """
-    # Implementation details...
-
-def validate_policy_numbers(data):
-    """
-    Validates policy numbers in Airbnb listing data.
-
-    Args:
-        data (list): A list of tuples containing listing information.
-
-    Returns:
-        list: A list of tuples with invalid policy numbers, containing listing name and ID.
-    """
     # pass
     sorted_tuples = sorted(data, key=lambda x: x[5])
     
@@ -204,6 +192,28 @@ def validate_policy_numbers(data):
         # Write each sorted tuple to the file
         for item in sorted_tuples:
             outfile.write(','.join(map(str, item)) + '\n')
+
+def validate_policy_numbers(data):
+    """
+    Validates policy numbers in Airbnb listing data.
+
+    Args:
+        data (list): A list of tuples containing listing information.
+
+    Returns:
+        list: A list of tuples with invalid policy numbers, containing listing name and ID.
+    """
+    # pass 
+    lists = []
+    for item in data:
+        if  item[2] == 'Pending' or item[2] == 'Exempt':
+            continue
+        else:
+            if re.search(r'20\d\d-00\d\d\d\dSTR', item[2]) or re.search(r'STR-000\d\d\d\d', item[2]):
+                continue
+            else:
+                lists.append((item[0], item[1]))
+    return lists
 
 # EXTRA CREDIT
 def get_google_scholar_articles(query): 
