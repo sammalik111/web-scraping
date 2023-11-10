@@ -191,7 +191,19 @@ def validate_policy_numbers(data):
     Returns:
         list: A list of tuples with invalid policy numbers, containing listing name and ID.
     """
-    # Implementation details...
+    # pass
+    sorted_tuples = sorted(data, key=lambda x: x[5])
+    
+    # Add labels
+    labels = "Listing Title,Listing ID,Policy Number,Place Type,Number of Reviews,Nightly Rate"
+
+    # Open the output file in write mode
+    with open(filename, 'w') as outfile:
+        # Write the labels as the first line in the file
+        outfile.write(labels + '\n')
+        # Write each sorted tuple to the file
+        for item in sorted_tuples:
+            outfile.write(','.join(map(str, item)) + '\n')
 
 # EXTRA CREDIT
 def get_google_scholar_articles(query): 
