@@ -158,7 +158,15 @@ def create_detailed_listing_data(html_file):
     Returns:
         list: A list of tuples, each containing detailed listing information.
     """
-    # Implementation details...
+    # pass
+    tuples = []
+    listings = get_listings(html_file)
+    for listing in listings:
+        listing_id = listing[1]
+        listing_data = get_listing_data(listing_id)
+        tuple = (listing[0], listing[1], listing_data[0], listing_data[1], listing_data[2], listing_data[3])
+        tuples.append(tuple)
+    return tuples
 
 def output_csv(data, filename): 
     """
