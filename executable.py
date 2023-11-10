@@ -252,7 +252,128 @@ def get_google_scholar_articles(query):
         print(f"An error occurred: {e}")
         return []
 
+
 # Test cases and main function...
+class TestCases(unittest.TestCase):
+
+    def test_get_listings(self):
+        # call get_listings("html_files/search_results.html")
+        # and save to a local variable
+        listings = get_listings("html_files/search_results.html")
+
+         # check that the number of listings extracted is correct (18 listings)
+        self.assertEqual(len(listings), 18)
+
+        # check that the variable you saved after calling the function is a list
+        self.assertEqual(type(listings), list)
+
+        # check that each item in the list is a tuple
+        for listing in listings:
+            self.assertEqual(type(listing), tuple)
+        # check that the first title and listing id tuple is correct (open the search results html and find it)
+        self.assertEqual(listings[0], ('Loft in Mission District', '1944564'))
+        # check that the last title and listing id tuple is correct (open the search results html and find it)
+        self.assertEqual(listings[-1], ('Guest suite in Mission District', '467507'))
+
+    def test_get_listing_data(self):
+        html_list = ["467507",
+                     "1550913",
+                     "1944564",
+                     "4614763",
+                     "6092596"]
+        
+        # call get_listing_data for i in html_list:
+        listing_informations = [get_listing_data(id) for id in html_list]
+
+        # check that the number of listing information is correct (5)
+        self.assertEqual(len(listing_informations), 5)
+        for listing_information in listing_informations:
+            # check that each item in the list is a tuple
+            self.assertEqual(type(listing_information), tuple)
+            # check that each tuple has 3 elements
+            self.assertEqual(len(listing_information), 4)
+            # check that the first two elements in the tuple are string
+            self.assertEqual(type(listing_information[0]), str)
+            self.assertEqual(type(listing_information[1]), str)
+            # check that the third element in the tuple is an int
+            self.assertEqual(type(listing_information[2]), int)
+            self.assertEqual(type(listing_information[3]), int)
+
+        # check that the first listing in the html_list has the correct policy number
+        self.assertEqual(listing_informations[0][0], 'STR-0005349')
+        # check that the last listing in the html_list has the correct place type
+        self.assertEqual(listing_informations[-1][1], 'Entire Room')
+        # check that the third listing has the correct cost
+        self.assertEqual(listing_informations[2][3], 181)
+
+    def test_create_detailed_listing_data(self):
+        # call create_detailed_listing_data on "html_files/search_results.html"
+        # and save it to a variable
+        detailed_data = create_detailed_listing_data("html_files/search_results.html")
+
+        # check that we have the right number of listings (18)
+        self.assertEqual(len(detailed_data), 18)
+
+        for item in detailed_data:
+            # assert each item in the list of listings is a tuple
+            self.assertEqual(type(item), tuple)
+            # check that each tuple has a length of 6
+            self.assertEqual(len(item), 6)
+
+        # check that the first tuple is made up of the following:
+        # ('Loft in Mission District', '1944564', '2022-004088STR', 'Entire Room', 422, 181)
+        self.assertEqual(detailed_data[0], ('Loft in Mission District', '1944564', '2022-004088STR', 'Entire Room', 422, 181))
+        # check that the last tuple is made up of the following:
+        # ('Guest suite in Mission District', '467507', 'STR-0005349', 'Entire Room', 324, 165)
+        self.assertEqual(detailed_data[-1], ('Guest suite in Mission District', '467507', 'STR-0005349', 'Entire Room', 324, 165))
+
+    def test_output_csv(self):
+        # call create_detailed_listing_data on "html_files/search_results.html"
+        # and save the result to a variable
+        detailed_data = create_detailed_listing_data("html_files/search_results.html")
+
+        # call output_csv() on the variable you saved
+        output_csv(detailed_data, "test.csv")
+
+        # read in the csv that you wrote
+        csv_lines = []
+        with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test.csv'), 'r') as f:
+            csv_reader = csv.reader(f)
+            for i in csv_reader:
+                csv_lines.append(i)
+
+        # check that there are 19 lines in the csv
+        self.assertEqual(len(csv_lines), 19)
+
+        # check that the header row is correct
+        self.assertEqual(csv_lines[0], ['Listing Title', 'Listing ID', 'Policy Number', 'Place Type', 'Number of Reviews', 'Nightly Rate'])
+        # check that the next row is Private room in Mission District,23672181,STR-0002892,Private Room,198,109
+        self.assertEqual(csv_lines[1], ['Private room in Mission District', '23672181', 'STR-0002892', 'Private Room', '198', '109'])
+        # check that the last row is Guest suite in Mission District,50010586,STR-0004717,Entire Room,70,310
+        self.assertEqual(csv_lines[-1], ['Guest suite in Mission District', '50010586', 'STR-0004717', 'Entire Room', '70', '310'])
+
+    def test_validate_policy_numbers(self):
+        # call get_detailed_listing_data on "html_files/search_results.html"
+        # and save the result to a variable
+        detailed_data = create_detailed_listing_data("html_files/search_results.html")
+
+        # call validate_policy_numbers on the variable created above and save the result as a variable
+        invalid_listings = validate_policy_numbers(detailed_data)
+
+        # check that the return value is a list
+        self.assertEqual(type(invalid_listings), list)
+        # check that the elements in the list are tuples
+        self.assertEqual(type(invalid_listings[0]), tuple)
+        # and that there are exactly two element in each tuple
+        self.assertEqual(len(invalid_listings[0]), 2)
+        
+    def test_get_google_scholars(self):
+        self.assertEqual(len(get_google_scholar_articles('airbnb')), 10)
+        results = get_google_scholar_articles('airbnb')
+        self.assertEqual(results[0], 'Progress on Airbnb: a literature review')
+        self.assertEqual(results[5], 'Why tourists choose Airbnb: A motivation-based segmentation study')
+
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
