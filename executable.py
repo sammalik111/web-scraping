@@ -75,7 +75,78 @@ def get_listing_data(listing_id):
     Returns:
         tuple: A tuple containing policy number, place type, number of reviews, and nightly price.
     """
-    # Implementation details...
+    # pass
+    html_file = 'html_files/listing_' + listing_id + '.html'
+    
+    with open(html_file, 'r', encoding='utf-8') as file:
+        html_content = file.read()
+            
+    soup = BeautifulSoup(html_content, 'html.parser')
+    
+    # reviews num
+    reviews = soup.find('span', {'class': '_s65ijh7'})
+    if reviews is None:
+        reviews = 0
+    else:
+        reviews = reviews.get_text()
+        pattern = r'\d+'
+        reviews = re.search(pattern, reviews).group()
+    
+    # price num
+    price = soup.find('div', {'class': '_1jo4hgw'}).get_text()
+    pattern = r'\d+'
+    price = re.search(pattern, price).group()
+    
+    # policy num
+    # classList = soup.findAll('span', {'class': 'll4r2nl dir dir-ltr'})
+    # for items in classList:
+    #     if items.get_text() == 'Pending' or items.get_text() == 'pending':
+    #         policy = 'Pending'
+    #         break
+    #     elif items.get_text() == 'Exempt' or items.get_text() == 'exempt':
+    #         policy = 'Exempt'
+    #         break
+    #     else:
+    #         if re.search(r'STR-\d+', items.get_text()):
+    #             policy = re.search(r'STR-\d+', items.get_text()).group()
+    #             policy = policy.replace('STR-', '')
+    #             break
+    #         elif re.search(r'\d+-\d+STR', items.get_text()):  
+    #             policy = re.search(r'\d+-\d+STR', items.get_text()).group()
+    #             break
+    
+    policyLi = soup.find('li', {'class': 'f19phm7j dir dir-ltr'})
+    policy = policyLi.find('span', {'class': 'll4r2nl dir dir-ltr'}).get_text()
+    if policy == 'Pending' or policy == 'pending':
+        policy = 'Pending'
+    elif policy == 'Exempt' or policy == 'exempt':
+        policy = 'Exempt'
+    # print (policy)
+            
+            
+    # place type
+    subtitle = soup.find('h2', {'class': '_14i3z6h'}).get_text()
+    if subtitle is None or subtitle == '':
+        otherTitle = soup.find('div', {'class': '_kh3xmo'}).get_text()
+        subtitle = otherTitle
+        
+    pattern = r'private'
+    pattern2 = r'Private'
+    pattern3 = r'shared'
+    pattern4 = r'Shared'
+    pattern5 = r'entire'
+    pattern6 = r'Entire'
+    if re.search(pattern, subtitle) or re.search(pattern2, subtitle):
+        place_type = 'Private Room'
+    elif re.search(pattern3, subtitle) or re.search(pattern4, subtitle):    
+        place_type = 'Shared Room'
+    elif re.search(pattern5, subtitle) or re.search(pattern6, subtitle):
+        place_type = 'Entire Room'
+        
+        
+    tuple = (policy, place_type, int(reviews), int(price))
+    
+    return tuple
 
 def create_detailed_listing_data(html_file): 
     """
