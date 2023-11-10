@@ -29,7 +29,7 @@ This Python script is designed to scrape data from Airbnb listings in San Franci
 - **Output:** List of tuples with invalid policy numbers
 - **Description:** Validates policy numbers in the data and returns a list of tuples containing the names and IDs of listings with invalid policy numbers.
 
-### `get_google_scholar_articles(query)` (Extra Credit):
+### `get_google_scholar_articles(query)`:
 - **Input:** Query string for Google Scholar search
 - **Output:** List of article titles from the first page of search results
 - **Description:** Sends a request to Google Scholar with the provided query, retrieves article titles from the first page of search results, and returns them as a list.
